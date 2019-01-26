@@ -6,9 +6,9 @@ public class ShotInstantiate : MonoBehaviour
 {
     public GameObject MiganInstiante;
 
-
-
     [SerializeField] float WaitForCLicked = 2f;
+    [SerializeField] AudioClip throwClip;
+
 
     bool IfClicked = false;
 
@@ -29,17 +29,12 @@ public class ShotInstantiate : MonoBehaviour
             //If The Player Click, To Avoid More than One Shot Been Appeared
             if (IfClicked)
             {
+                Main.PlaySound( throwClip, randomizePitch:true );
                 Instantiate(MiganInstiante, transform.position, Quaternion.identity);
             }
-
         }
-          
-
         
     }
- 
-
-
 
     IEnumerator IFCLICKEDBYPLAYER()
     {
@@ -47,7 +42,6 @@ public class ShotInstantiate : MonoBehaviour
         IfClicked = true;
         yield return new WaitForSeconds(WaitForCLicked);
         IfClicked = false;
-
     }
 
 }
