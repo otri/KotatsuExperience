@@ -8,15 +8,24 @@ public class MiganTHrow : MonoBehaviour
 
     [SerializeField] float Force=4f;
     [SerializeField] float TimeToDestroy = 4f;
+    [SerializeField] AudioClip bounceClip;
+    private float velToVol = .2F;
+    private float velocityClipSplit = 10F;
 
     private void Start()
     {
         MiganRigid = GetComponent<Rigidbody>();
+        Destroy(this.gameObject,TimeToDestroy);
     }
 
     private void Update()
     {
         transform.Translate(new Vector3(0.0f, 0.0f, Force * Time.deltaTime));
-        Destroy(this.gameObject,TimeToDestroy);
+    }
+
+    void OnCollisionEnter (Collision coll)
+    {
+        float hitVol = coll.relativeVelocity.magnitude * velToVol;
+        Main.PlaySound(bounceClip,randomizePitch:true, volume:hitVol);
     }
 }

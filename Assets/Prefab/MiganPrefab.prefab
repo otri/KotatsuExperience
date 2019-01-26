@@ -153,3 +153,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Force: 14.3
+  TimeToDestroy: 4
+  bounceClip: {fileID: 8300000, guid: c39d2fef5cb8f49feb563e3d03eb4f56, type: 3}

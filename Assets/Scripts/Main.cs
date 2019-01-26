@@ -48,7 +48,7 @@ public class Main : MonoBehaviour
         return source;
     }
 
-    public static void PlaySound( AudioClip clip, bool randomizePitch = false ) {
+    public static void PlaySound( AudioClip clip, bool randomizePitch = false, float volume = 1.0f ) {
         var source = instance.NextEfxSource();
 
         //Choose a random pitch to play back our clip at between our high and low pitch ranges.
@@ -61,6 +61,7 @@ public class Main : MonoBehaviour
             source.pitch = 1;
         }
 
+        source.volume = volume;
         source.clip = clip;
         source.Play();
     }
