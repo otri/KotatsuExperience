@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class MamaController : MonoBehaviour
 {
@@ -48,8 +49,12 @@ public class MamaController : MonoBehaviour
     {
         Mikan otherMikan = coll.rigidbody.GetComponent<Mikan>();
         if( otherMikan != null ) {
-            Main.MikanHitMama();
+            Main.instance.MikanHitMama();
         }
+    }
+
+    public void ReturnHome() {
+        transform.DOMove(Vector3.zero, 0.5f);
     }
 
 }

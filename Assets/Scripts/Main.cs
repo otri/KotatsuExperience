@@ -149,6 +149,7 @@ public class Main : MonoBehaviour
             _GameTimelineDirector.Stop();
             QuestionPanel.SetActive(false);
             _Mama.can_walk = false;
+            _Mama.ReturnHome();
             break;
 
         case PlayState.InfluenzaGameOver:
@@ -198,8 +199,6 @@ public class Main : MonoBehaviour
         break;
 
         case PlayState.StopMamachan:
-            _player.WarmpthUpdate();
-
             if( _GameTimelineDirector.time >= _GameTimelineDirector.duration ) {
                 SetPlayState(PlayState.HangLaundry);
             }
@@ -265,7 +264,9 @@ public class Main : MonoBehaviour
         SetPlayState(PlayState.HangLaundry);
     }
 
-    public static void MikanHitMama() {
-
+    public void MikanHitMama() {
+        if( _playState == PlayState.StopMamachan && _player.BoostHP(1) ) {
+            SetPlayState(PlayState.ReturnToPlay);
+        }
     }
 }

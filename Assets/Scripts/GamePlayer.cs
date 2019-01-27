@@ -21,7 +21,7 @@ public class GamePlayer : MonoBehaviour
     float _workTime;
 
     public void Init() {
-        CurrentHp = new ReactiveProperty<long>(100);
+        CurrentHp = new ReactiveProperty<long>(80);
         IsWarm = new ReactiveProperty<bool>(false);
         Working = new ReactiveProperty<bool>(false);
     }
@@ -62,5 +62,16 @@ public class GamePlayer : MonoBehaviour
     public void DoWork() {
         _workTime = Time.time + WorkDuration;
         Working.Value = true;
+    }
+
+    public bool BoostHP( int value ) {
+        long hp = CurrentHp.Value + value;
+        if( hp >= 100 ) {
+            CurrentHp.Value = 100;
+            return true;
+        } else {
+            CurrentHp.Value = hp;
+            return false;
+        }
     }
 }

@@ -7,7 +7,7 @@ public class Mikan : MonoBehaviour
     Rigidbody MiganRigid;   //蜜柑の自身RigidBody
 
     [SerializeField] float Force=4f;
-    [SerializeField] float TimeToDestroy = 4f;
+    [SerializeField] float TimeToDestroy = 2f;
     [SerializeField] AudioClip bounceClip;
     private float velToVol = .2F;
     private float velocityClipSplit = 10F;
