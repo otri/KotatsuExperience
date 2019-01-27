@@ -2,6 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayState {
+    InitializePlay,
+    StartOfPlay,
+    StopMamachan,
+    HangLaundry,
+    ReturnToPlay,
+    InfluenzaGameOver
+}
+
 public class Main : MonoBehaviour
 {
     public static Main instance = null;
@@ -24,12 +33,15 @@ public class Main : MonoBehaviour
         InitSoundManager();
     }
 
+    void Start() {
+        SetPlayState(PlayState.InitializePlay);
+    }
+
     // Update the game state every frame.
     void Update() {
     }
 
-
-//----- Sound Management
+//----- Sound Management ------
     public GameObject efxSourceRoot;                   //Drag a reference to the audio source which will play the sound effects.
     public AudioSource musicSource;                 //Drag a reference to the audio source which will play the music.
     static float lowPitchRange = .95f;              //The lowest a sound effect will be randomly pitched.
@@ -65,4 +77,27 @@ public class Main : MonoBehaviour
         source.clip = clip;
         source.Play();
     }
+
+
+//---- Game Management ----
+    PlayState _playState;
+    public PlayState playState {
+        get { return _playState; }
+        set { SetPlayState(value); }
+    }
+
+    public void SetPlayState( PlayState newState ) {
+        switch(newState) {
+        case PlayState.InitializePlay:
+            
+        break;
+
+        default:
+            Debug.Assert(false, "Unahndled state");
+        break;
+        }
+
+        playState = newState;
+    }
+
 }
