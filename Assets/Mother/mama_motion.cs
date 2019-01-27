@@ -35,8 +35,10 @@ public class mama_motion : MonoBehaviour
 
             this.Mather_animater.SetInteger("mama_walk", 1);
         }
-        else
+
+        if( pos.z <= -13 )
         {
+            can_walk = false;
             this.Mather_animater.SetInteger("mama_walk", 2);
         }
     }
