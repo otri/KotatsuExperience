@@ -30,9 +30,16 @@ public class Main : MonoBehaviour
     public Thermometer _Thermometer;
     public GameObject _GameStage;
 
+    public GameObject QuestionPanel;
+
     public PlayableDirector _GameTimelineDirector;
     public TimelineAsset MamaEnter;  
     public TimelineAsset MamaAttack;
+
+    public MamaController _Mama;
+    public AudioClip MikanThrowClip;
+    public Transform _MikanInBowl;
+    public GameObject MikanPrefab;
 
     public CanvasGroup WorkScreen;
     public CanvasGroup GameOverScreen;
@@ -125,16 +132,20 @@ public class Main : MonoBehaviour
             break;
 
         case PlayState.StopMamachan:
+            _Mama.can_walk = true;
             PlayMusic(StopMamachanMusic);
+            QuestionPanel.SetActive(false);
             _GameTimelineDirector.Play(MamaAttack);
         break;
 
         case PlayState.HangLaundry:
+            _Mama.can_walk = false;
             PlayMusic(WorkMusic);
             _player.DoWork();
         break;
 
         case PlayState.ReturnToPlay:
+            _Mama.can_walk = false;
             break;
 
         case PlayState.InfluenzaGameOver:
@@ -184,6 +195,21 @@ public class Main : MonoBehaviour
         break;
 
         case PlayState.StopMamachan:
+            if( _GameTimelineDirector.time >= _GameTimelineDirector.duration ) {
+                SetPlayState(PlayState.HangLaundry);
+            }
+
+            if(Input.GetMouseButtonDown(0))
+            {
+                Main.PlaySound( MikanThrowClip, randomizePitch:true );
+                GameObject thrownMikan = Instantiate(MikanPrefab, _MikanInBowl.position, _MikanInBowl.rotation);
+                Vector3 force = new Vector3(0, 5, 10);
+                thrownMikan.GetComponent<Rigidbody>().AddForce( force, ForceMode.Impulse );
+                thrownMikan.GetComponent<Rigidbody>().useGravity = true;
+                thrownMikan.GetComponent<Mikan>().enabled = true;
+
+                _MikanInBowl.gameObject.SetActive(false);
+            }
         break;
 
         case PlayState.HangLaundry:

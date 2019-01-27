@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MiganTHrow : MonoBehaviour
+public class Mikan : MonoBehaviour
 {
     Rigidbody MiganRigid;   //蜜柑の自身RigidBody
 
@@ -18,10 +18,10 @@ public class MiganTHrow : MonoBehaviour
         Destroy(this.gameObject,TimeToDestroy);
     }
 
-    private void Update()
-    {
-        transform.Translate(new Vector3(0.0f, 0.0f, Force * Time.deltaTime));
-    }
+    // private void Update()
+    // {
+    //     transform.Translate(new Vector3(0.0f, 0.0f, Force * Time.deltaTime));
+    // }
 
     void OnCollisionEnter (Collision coll)
     {
