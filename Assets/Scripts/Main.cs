@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum PlayState {
+    Undefined,
     InitializePlay,
     StartOfPlay,
     StopMamachan,
@@ -39,6 +41,7 @@ public class Main : MonoBehaviour
 
     // Update the game state every frame.
     void Update() {
+        UpdatePlayState();
     }
 
 //----- Sound Management ------
@@ -78,9 +81,8 @@ public class Main : MonoBehaviour
         source.Play();
     }
 
-
 //---- Game Management ----
-    PlayState _playState;
+    PlayState _playState = PlayState.Undefined;
     public PlayState playState {
         get { return _playState; }
         set { SetPlayState(value); }
@@ -89,7 +91,10 @@ public class Main : MonoBehaviour
     public void SetPlayState( PlayState newState ) {
         switch(newState) {
         case PlayState.InitializePlay:
-            
+            TransitionCoordinator.Fade("Test_UI", Color.black, 1);
+        break;
+
+        case PlayState.StartOfPlay:
         break;
 
         default:
@@ -97,7 +102,27 @@ public class Main : MonoBehaviour
         break;
         }
 
-        playState = newState;
+        _playState = newState;
+    }
+
+    public void UpdatePlayState() {
+        switch(_playState) {
+        case PlayState.Undefined:
+        break;
+
+        case PlayState.InitializePlay:
+            if( TransitionCoordinator.AreWeFading() == false ) {
+                SetPlayState( PlayState.StartOfPlay );
+            }
+        break;
+
+        case PlayState.StartOfPlay:
+        break;
+
+        default:
+            Debug.Assert(false, "Unahndled state");
+        break;
+        }
     }
 
 }
