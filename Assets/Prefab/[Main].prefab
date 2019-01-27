@@ -170,7 +170,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c430928eac4024594b9798b111cc7727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freq: 0.1
 --- !u!1 &1536586755
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,8 +343,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 066d8aef408864cedb2e34e72b887941, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IntroPanel: {fileID: 0}
+  StartButton: {fileID: 0}
+  Watermark: {fileID: 0}
+  HUD: {fileID: 0}
+  _Thermometer: {fileID: 0}
+  _GameStage: {fileID: 0}
+  WorkScreen: {fileID: 0}
+  GameOverScreen: {fileID: 0}
   efxSourceRoot: {fileID: 8176104093010305410}
   musicSource: {fileID: 8176104093834473775}
+  StartOfPlayMusic: {fileID: 8300000, guid: ef421924ed0f6487b8a9a3760b4b591c, type: 3}
+  StopMamachanMusic: {fileID: 8300000, guid: b551e82851858431f96205fc47cc68e1, type: 3}
+  WorkMusic: {fileID: 8300000, guid: 19e12c11d887841859764e2af489f723, type: 3}
+  GameOverMusic: {fileID: 8300000, guid: bea57cc5784cf425fa1fc959a5bfdce8, type: 3}
 --- !u!1 &8176104093010305410
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,11 +430,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: ef421924ed0f6487b8a9a3760b4b591c, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

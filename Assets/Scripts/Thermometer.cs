@@ -7,7 +7,7 @@ using UniRx;
 public class Thermometer : MonoBehaviour
 {
     Slider _slider;
-    void Start()
+    void Awake()
     {
         // スライダーを取得する
         _slider = GetComponent<Slider>();

@@ -7,23 +7,29 @@ public class GamePlayer : MonoBehaviour
 {
     public ReactiveProperty<long> CurrentHp;
     public ReactiveProperty<bool> IsWarm;
+    public ReactiveProperty<bool> Working;
 
     public IObservable<long> CurrentHpObservable(){
         return CurrentHp;
     }
 
     private const float hpTickDuration = 0.1f;
+    private const float WorkDuration = 5;
+
     float hpTickTimer;
 
-    void Awake() {
+    float _workTime;
+
+    public void Init() {
         CurrentHp = new ReactiveProperty<long>(100);
         IsWarm = new ReactiveProperty<bool>(false);
+        Working = new ReactiveProperty<bool>(false);
     }
 
-    void Update() {
+    public void DoWorkUpdate() {
         //Debug.Log(count % 3);
         hpTickTimer += Time.deltaTime;
-        if (hpTickTimer > hpTickDuration)
+        if(hpTickTimer > hpTickDuration)
         {
             long hp = CurrentHp.Value;
             if (IsWarm.Value)
@@ -43,9 +49,18 @@ public class GamePlayer : MonoBehaviour
             hpTickTimer = 0;
             CurrentHp.Value = hp;
         }
+
+        if(Working.Value && Time.time > _workTime ) {
+            Working.Value = false;
+        }
     }
 
     public void SetActive( bool active ) {
         gameObject.SetActive(active);
+    }
+
+    public void DoWork() {
+        _workTime = Time.time + WorkDuration;
+        Working.Value = true;
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Timeline;
+using UnityEngine.Playables;
 using UniRx;
 
 public enum PlayState {
@@ -22,8 +24,21 @@ public class Main : MonoBehaviour
     public CanvasGroup IntroPanel;
     public Button StartButton;
 
+    public CanvasGroup Watermark;
+
     public CanvasGroup HUD;
     public Thermometer _Thermometer;
+    public GameObject _GameStage;
+
+    public PlayableDirector _GameTimelineDirector;
+    public TimelineAsset MamaEnter;  
+    public TimelineAsset MamaAttack;
+
+    public CanvasGroup WorkScreen;
+    public CanvasGroup GameOverScreen;
+
+    public Camera _MainCamera;
+    public Camera _MamaAttackCamera;
 
     void Start() {
         instance = this;
@@ -44,6 +59,12 @@ public class Main : MonoBehaviour
 //----- Sound Management ------
     public GameObject efxSourceRoot;                   //Drag a reference to the audio source which will play the sound effects.
     public AudioSource musicSource;                 //Drag a reference to the audio source which will play the music.
+
+    public AudioClip StartOfPlayMusic;
+    public AudioClip StopMamachanMusic;
+    public AudioClip WorkMusic;
+    public AudioClip GameOverMusic;
+
     static float lowPitchRange = .95f;              //The lowest a sound effect will be randomly pitched.
     static float highPitchRange = 1.05f;            //The highest a sound effect will be randomly pitched.
     AudioSource[] efxSources;
@@ -51,7 +72,6 @@ public class Main : MonoBehaviour
 
     void InitSoundManager() {
         efxSources = efxSourceRoot.GetComponentsInChildren<AudioSource>(efxSourceRoot);
-
     }
 
     AudioSource NextEfxSource() {
@@ -78,6 +98,12 @@ public class Main : MonoBehaviour
         source.Play();
     }
 
+    public void PlayMusic( AudioClip music ) {
+        musicSource.loop = true;
+        musicSource.clip = music;
+        musicSource.Play();
+    }
+
 //---- PlayState Management ----
     PlayState _playState = PlayState.Undefined;
     public PlayState playState {
@@ -86,20 +112,64 @@ public class Main : MonoBehaviour
     }
 
     public void SetPlayState( PlayState newState ) {
+        PlayState oldState = _playState;
+        _playState = newState;
+
         switch(newState) {
         case PlayState.InitializePlay:
         break;
 
         case PlayState.StartOfPlay:
-            _player.SetActive(true);
+            PlayMusic(StartOfPlayMusic);
+            _GameTimelineDirector.Play(MamaEnter);
             break;
+
+        case PlayState.StopMamachan:
+            PlayMusic(StopMamachanMusic);
+            _GameTimelineDirector.Play(MamaAttack);
+        break;
+
+        case PlayState.HangLaundry:
+            PlayMusic(WorkMusic);
+            _player.DoWork();
+        break;
+
+        case PlayState.ReturnToPlay:
+            break;
+
+        case PlayState.InfluenzaGameOver:
+            PlayMusic(GameOverMusic);
+        break;
 
         default:
             Debug.Assert(false, "Unahndled state");
         break;
         }
 
-        _playState = newState;
+        bool introScreen = newState == PlayState.InitializePlay;
+        IntroPanel.gameObject.SetActive(introScreen);
+        Watermark.alpha = introScreen ? 0 : 1;
+
+        bool gameScreen = newState == PlayState.StartOfPlay
+                     || newState == PlayState.StopMamachan
+                     || newState == PlayState.ReturnToPlay;
+        _GameStage.SetActive(gameScreen);
+
+        bool showHUD = newState == PlayState.StartOfPlay
+                     || newState == PlayState.StopMamachan
+                     || newState == PlayState.HangLaundry
+                     || newState == PlayState.ReturnToPlay;
+        HUD.gameObject.SetActive(showHUD);
+
+        bool mamaAttack = newState == PlayState.StopMamachan;
+        _MainCamera.gameObject.SetActive(!mamaAttack);
+        _MamaAttackCamera.gameObject.SetActive(mamaAttack);
+
+        bool doWork = newState == PlayState.HangLaundry;
+        WorkScreen.gameObject.SetActive(doWork);
+
+        bool gameOver = newState == PlayState.InfluenzaGameOver;
+        GameOverScreen.gameObject.SetActive(gameOver);
     }
 
     public void UpdatePlayState() {
@@ -108,10 +178,27 @@ public class Main : MonoBehaviour
         break;
 
         case PlayState.InitializePlay:
-            SetPlayState( PlayState.StartOfPlay );
         break;
 
         case PlayState.StartOfPlay:
+        break;
+
+        case PlayState.StopMamachan:
+        break;
+
+        case PlayState.HangLaundry:
+            _player.DoWorkUpdate();
+            if(_player.Working.Value == false) {
+                SetPlayState(PlayState.ReturnToPlay);
+            }
+        break;
+
+        case PlayState.ReturnToPlay:
+            // TODO: Refill Mikan
+            SetPlayState(PlayState.StartOfPlay);
+        break;
+
+        case PlayState.InfluenzaGameOver:
         break;
 
         default:
@@ -125,11 +212,25 @@ public class Main : MonoBehaviour
 
     void InitGamePlayer() {
         _player = GetComponentInChildren<GamePlayer>();
-        _player.SetActive(false);
+        _player.Init();
         _Thermometer.SetHPObservable(_player.CurrentHpObservable());
+        _player.CurrentHpObservable().Subscribe((hp)=> {
+            if(hp <= 0) {
+                SetPlayState(PlayState.InfluenzaGameOver);
+            }
+        });
     }
 
     static IObservable<long> playerHpObservable(){
         return instance._player.CurrentHpObservable();
+    }
+
+    public void PlayerHitNo() {
+        SetPlayState(PlayState.StopMamachan);
+    }
+
+    public void PlayerHitYes() {
+        // TODO: _DidWorkGetMikan = true;
+        SetPlayState(PlayState.HangLaundry);
     }
 }
