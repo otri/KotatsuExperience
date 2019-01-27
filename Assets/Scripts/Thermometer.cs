@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 
-public class WarmSlider : MonoBehaviour
+public class Thermometer : MonoBehaviour
 {
     Slider _slider;
     void Start()

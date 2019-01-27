@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UniRx;
 
 public enum PlayState {
@@ -18,27 +19,21 @@ public class Main : MonoBehaviour
 {
     public static Main instance = null;
 
-    void Awake() {
-        if( instance == null ) {
-            instance = this;
-        }
-        else if( instance != this ) {
-            Destroy(gameObject);
-        }
+    public CanvasGroup IntroPanel;
+    public Button StartButton;
 
-        DontDestroyOnLoad(gameObject);
-
-        InitGame();
-    }
-
-    // Init all the working parts of the game.
-    void InitGame() {
-        InitSoundManager();
-        InitGamePlayer();
-    }
+    public CanvasGroup HUD;
+    public Thermometer _Thermometer;
 
     void Start() {
+        instance = this;
+        InitSoundManager();
+        InitGamePlayer();
         SetPlayState(PlayState.InitializePlay);
+
+        StartButton.OnClickAsObservable().Subscribe((click)=>{
+            SetPlayState(PlayState.StartOfPlay);
+        });
     }
 
     // Update the game state every frame.
@@ -93,13 +88,11 @@ public class Main : MonoBehaviour
     public void SetPlayState( PlayState newState ) {
         switch(newState) {
         case PlayState.InitializePlay:
-            TransitionCoordinator.Fade("Test_UI", Color.black, 1);
         break;
 
         case PlayState.StartOfPlay:
-                _player.SetActive(true);
-                GameObject.Find("Thermometer").GetComponent<WarmSlider>().SetHPObservable(_player.CurrentHpObservable());
-        break;
+            _player.SetActive(true);
+            break;
 
         default:
             Debug.Assert(false, "Unahndled state");
@@ -115,9 +108,7 @@ public class Main : MonoBehaviour
         break;
 
         case PlayState.InitializePlay:
-            if( TransitionCoordinator.AreWeFading() == false ) {
-                SetPlayState( PlayState.StartOfPlay );
-            }
+            SetPlayState( PlayState.StartOfPlay );
         break;
 
         case PlayState.StartOfPlay:
@@ -129,13 +120,13 @@ public class Main : MonoBehaviour
         }
     }
 
-
     // --- Player Management ---
     GamePlayer _player;
 
     void InitGamePlayer() {
         _player = GetComponentInChildren<GamePlayer>();
         _player.SetActive(false);
+        _Thermometer.SetHPObservable(_player.CurrentHpObservable());
     }
 
     static IObservable<long> playerHpObservable(){
