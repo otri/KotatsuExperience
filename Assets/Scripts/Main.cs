@@ -140,11 +140,14 @@ public class Main : MonoBehaviour
 
         case PlayState.HangLaundry:
             _Mama.can_walk = false;
+            _player.IsWarm.Value = false;
             PlayMusic(WorkMusic);
             _player.DoWork();
         break;
 
         case PlayState.ReturnToPlay:
+            _GameTimelineDirector.Stop();
+            QuestionPanel.SetActive(false);
             _Mama.can_walk = false;
             break;
 
@@ -195,6 +198,8 @@ public class Main : MonoBehaviour
         break;
 
         case PlayState.StopMamachan:
+            _player.WarmpthUpdate();
+
             if( _GameTimelineDirector.time >= _GameTimelineDirector.duration ) {
                 SetPlayState(PlayState.HangLaundry);
             }
@@ -213,7 +218,7 @@ public class Main : MonoBehaviour
         break;
 
         case PlayState.HangLaundry:
-            _player.DoWorkUpdate();
+            _player.WarmpthUpdate();
             if(_player.Working.Value == false) {
                 SetPlayState(PlayState.ReturnToPlay);
             }
@@ -258,5 +263,9 @@ public class Main : MonoBehaviour
     public void PlayerHitYes() {
         // TODO: _DidWorkGetMikan = true;
         SetPlayState(PlayState.HangLaundry);
+    }
+
+    public static void MikanHitMama() {
+
     }
 }

@@ -26,7 +26,7 @@ public class GamePlayer : MonoBehaviour
         Working = new ReactiveProperty<bool>(false);
     }
 
-    public void DoWorkUpdate() {
+    public void WarmpthUpdate() {
         //Debug.Log(count % 3);
         hpTickTimer += Time.deltaTime;
         if(hpTickTimer > hpTickDuration)
