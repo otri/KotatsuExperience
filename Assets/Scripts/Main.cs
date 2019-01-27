@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UniRx;
 
 public enum PlayState {
     Undefined,
@@ -33,6 +34,7 @@ public class Main : MonoBehaviour
     // Init all the working parts of the game.
     void InitGame() {
         InitSoundManager();
+        InitGamePlayer();
     }
 
     void Start() {
@@ -81,7 +83,7 @@ public class Main : MonoBehaviour
         source.Play();
     }
 
-//---- Game Management ----
+//---- PlayState Management ----
     PlayState _playState = PlayState.Undefined;
     public PlayState playState {
         get { return _playState; }
@@ -95,6 +97,8 @@ public class Main : MonoBehaviour
         break;
 
         case PlayState.StartOfPlay:
+                _player.SetActive(true);
+                GameObject.Find("Thermometer").GetComponent<WarmSlider>().SetHPObservable(_player.CurrentHpObservable());
         break;
 
         default:
@@ -125,4 +129,16 @@ public class Main : MonoBehaviour
         }
     }
 
+
+    // --- Player Management ---
+    GamePlayer _player;
+
+    void InitGamePlayer() {
+        _player = GetComponentInChildren<GamePlayer>();
+        _player.SetActive(false);
+    }
+
+    static IObservable<long> playerHpObservable(){
+        return instance._player.CurrentHpObservable();
+    }
 }
